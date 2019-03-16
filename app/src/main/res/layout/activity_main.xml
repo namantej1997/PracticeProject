@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="72dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/title_home"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView"/>
+
+
+    <ScrollView
+android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/navigation"
+
+        app:layout_constraintTop_toBottomOf="@+id/message">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <de.codecrafters.tableview.TableView
+
+                android:id="@+id/tableView"
+                android:layout_width="247dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="75dp"
+                ></de.codecrafters.tableview.TableView>
+
+            <ProgressBar
+                android:id="@+id/progressBar2"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:progressDrawable="@drawable/progress"
+                android:layout_marginTop="50dp"
+                android:layout_marginLeft="130dp"
+                android:outlineAmbientShadowColor="@color/black"
+                android:outlineSpotShadowColor="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/tableView"
+                android:progress="100"
+
+                 />
+
+            <TextView
+                android:id="@+id/financialHealth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/progressBar2"
+                android:text="Financial Health"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="130dp"
+                android:textSize="15dp"
+                />
+
+            <TextView
+                android:id="@+id/total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/financialHealth"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="135dp"
+                android:text="Toal Balance Left: (in Rs)"
+                android:textSize="15dp"
+                />
+
+            <TextView
+                android:id="@+id/balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/total"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="135dp"
+                android:text="0"
+                android:textSize="40dp"
+                />
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:background="?android:attr/windowBackground"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:menu="@menu/navigation" />
+
+
+
+</android.support.constraint.ConstraintLayout>

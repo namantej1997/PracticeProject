@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="title_home">Dashboard</string>
+    <string name="title_dashboard">Scan</string>
+    <string name="title_notifications">Save</string>
+    <string name="title_setting">Logout</string>
+
+    <string name="learn_inves">
+        Learn Investment basics
+    </string>
+    <string name="create_a_ch">
+        Create a challenge.
+    </string>
+    <string name="market_stud">
+        PortfolioMaster
+    </string>
+    <string name="open">
+        Open
+    </string>
+    <string name="close">
+        Close
+    </string>
+    <string name="username">
+        Username
+    </string>
+    <string name="password">
+        Password
+    </string>
+    <string name="fname">
+        First name
+    </string>
+    <string name="lname">
+        Last name
+    </string>
+    <string name="cpassword">Confirm Password</string>
+</resources>
