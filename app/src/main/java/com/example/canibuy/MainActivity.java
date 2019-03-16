@@ -16,15 +16,19 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -36,7 +40,7 @@ import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    String[] tableheaders={"Income","Expense"};
+    String[] tableheaders = {"Income", "Expense"};
     String[][] tableData;
 
     private TextView mTextMessage;
@@ -50,12 +54,12 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     Intent display;
-                    display = new Intent(getApplicationContext(),displayPie.class);
+                    display = new Intent(getApplicationContext(), DashBoard.class);
                     startActivity(display);
                     return true;
                 case R.id.navigation_dashboard:
                     Intent scan;
-                    scan = new Intent(getApplicationContext(),Scanactivity.class);
+                    scan = new Intent(getApplicationContext(), Scanactivity.class);
                     startActivity(scan);
                     return true;
                 case R.id.navigation_notifications:
@@ -73,13 +77,14 @@ public class MainActivity extends AppCompatActivity {
     private void logout() {
         auth.signOut();
         finish();
-        startActivity(new Intent(this,LoginActivity.class));
+        startActivity(new Intent(this, LoginActivity.class));
 
     }
+
     private void requestSmsPermission() {
         String permission = Manifest.permission.RECEIVE_SMS;
         int grant = ContextCompat.checkSelfPermission(this, permission);
-        if ( grant != PackageManager.PERMISSION_GRANTED) {
+        if (grant != PackageManager.PERMISSION_GRANTED) {
             String[] permission_list = new String[1];
             permission_list[0] = permission;
             ActivityCompat.requestPermissions(this, permission_list, 1);
@@ -97,31 +102,27 @@ public class MainActivity extends AppCompatActivity {
         requestSmsPermission();
 
         auth = FirebaseAuth.getInstance();
-        if(auth.getCurrentUser()==null){
+        if (auth.getCurrentUser() == null) {
             finish();
-            startActivity(new Intent(this,LoginActivity.class));
+            startActivity(new Intent(this, LoginActivity.class));
         }
 
         FirebaseUser user = auth.getCurrentUser();
 
         mTextMessage = (TextView) findViewById(R.id.message);
-        mTextMessage.setText("Welcome: "+user.getEmail());
+        mTextMessage.setText("Welcome: " + user.getEmail());
 
         //creating table...
 
-        final TableView<String[]> tb =(TableView<String[]>) findViewById(R.id.tableView);
-        tb.setColumnCount(2);
-        tb.setHeaderBackgroundColor(Color.parseColor("#2ecc71"));
-        tb.setHeaderAdapter(new SimpleTableHeaderAdapter(this,tableheaders));
-        //tb.setDataAdapter(new SimpleTableDataAdapter(this,tableData));
+        updateTable();
 
 
         //recieving messages
         SmsReceiver.bindListener(new SmsListener() {
             @Override
             public void messageReceived(String messageText) {
-                Log.d("Text",messageText);
-                getMoney(messageText);
+                Log.d("Text", messageText);
+                parseSMS(messageText);
                 //Toast.makeText(MainActivity.this,"Message: "+messageText,Toast.LENGTH_LONG).show();
             }
         });
@@ -130,40 +131,109 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
-    public void getMoney(String messageText) {
+    public void parseSMS(String messageText) {
 
-        Log.i("Text", messageText);
+        String category;
+        String ammount;
+        String itemName;
+        boolean debited;
 
-
-        String regex = "credited";
-        String regex1 = "debited";
-
-
-        String messageToSearch = messageText;
-        int money = Integer.parseInt(messageToSearch.replaceAll("[^0-9]", ""));
-
-        //  Toast.makeText(SMSActivity.this,""+money,Toast.LENGTH_LONG).show();
-
-        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-        Pattern pattern1 = Pattern.compile(regex1,Pattern.CASE_INSENSITIVE);
-
-        Matcher matcher = pattern.matcher(messageToSearch);
-        Matcher matcher1 = pattern1.matcher(messageToSearch);
-        Map<String, Integer> moneyleft = new HashMap<>();
-
-        if(matcher.find()){
-            moneyleft.put(regex, money);
-            Toast.makeText(MainActivity.this,""+regex+"  "+money,Toast.LENGTH_LONG).show();
+        //New sms parser
+        messageText = messageText.toLowerCase();
+        if (messageText.contains("credited")) {
+            debited = false;
+            category = "Bank";
+            if (messageText.contains("interest"))
+                itemName = "Interest";
+            else
+                itemName = "Salary";
+            ammount = messageText.replaceAll("[^0-9]", "");
+        } else {
+            debited = false;
+            if (messageText.contains("ola")) {
+                category = "Travel";
+                itemName = "Ola";
+            } else if (messageText.contains("metro")) {
+                category = "Travel";
+                itemName = "Metro";
+            } else if (messageText.contains("domino's")) {
+                category = "Food";
+                itemName = "Domino's";
+            } else if (messageText.contains("bookmyshow")) {
+                category = "Entertainment";
+                itemName = "Book My Show";
+            } else {
+                category = "Others";
+                itemName = "Miscellaneous";
+            }
+            ammount = messageText.replaceAll("[^0-9]", "");
         }
+        Ledger smsLedger = new Ledger(category, ammount, itemName, debited);
 
-        else if(matcher1.find()){
-            moneyleft.put(regex1, money);
-            Toast.makeText(MainActivity.this,""+regex1+"  "+money,Toast.LENGTH_LONG).show();
+        //Firebase Stuff
+
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        FireBaseHelper helper = new FireBaseHelper(mDatabase);
+        helper.saveLedger(smsLedger);
+        updateTable();
+
+
+        //OLD SMS PARSER
+//        Log.i("Text", messageText);
+//
+//
+//        String regex = "credited";
+//        String regex1 = "debited";
+//
+//
+//        String messageToSearch = messageText;
+//        int money = Integer.parseInt(messageToSearch.replaceAll("[^0-9]", ""));
+//
+//        //  Toast.makeText(SMSActivity.this,""+money,Toast.LENGTH_LONG).show();
+//
+//        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+//        Pattern pattern1 = Pattern.compile(regex1, Pattern.CASE_INSENSITIVE);
+//
+//        Matcher matcher = pattern.matcher(messageToSearch);
+//        Matcher matcher1 = pattern1.matcher(messageToSearch);
+//        Map<String, Integer> moneyleft = new HashMap<>();
+//
+//        if (matcher.find()) {
+//            moneyleft.put(regex, money);
+//            Toast.makeText(MainActivity.this, "" + regex + "  " + money, Toast.LENGTH_LONG).show();
+//        } else if (matcher1.find()) {
+//            moneyleft.put(regex1, money);
+//            Toast.makeText(MainActivity.this, "" + regex1 + "  " + money, Toast.LENGTH_LONG).show();
+//        }
+//
+//        firebaseFirestore.collection("items").add(moneyleft);
+    }
+
+    private void updateTable() {
+        final TableView<String[]> tb = (TableView<String[]>) findViewById(R.id.tableView);
+        tb.setColumnCount(2);
+        tb.setHeaderBackgroundColor(Color.parseColor("#2ecc71"));
+        tb.setHeaderAdapter(new SimpleTableHeaderAdapter(this, tableheaders));
+        //tb.setDataAdapter(new SimpleTableDataAdapter(this,tableData));
+
+
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        FireBaseHelper helper = new FireBaseHelper(mDatabase);
+        ArrayList<Ledger> ledgerList = helper.retrieveLedger();
+
+        ArrayList<String> creditedArr = new ArrayList<>();
+        ArrayList<String> debitedArr = new ArrayList<>();
+        for (Ledger ledger : ledgerList) {
+            if (ledger.isDebited()) {
+                debitedArr.add(ledger.getAmmount() + " (" + ledger.getItemName() + ")");
+            } else {
+                creditedArr.add(ledger.getAmmount() + " (" + ledger.getItemName() + ")");
+            }
         }
+        tableData[0] = creditedArr.toArray(new String[creditedArr.size()]);
+        tableData[1] = debitedArr.toArray(new String[debitedArr.size()]);
+        tb.setDataAdapter(new SimpleTableDataAdapter(this, tableData));
 
-
-
-        //  firebaseFirestore.collection("items").add(moneyleft);
     }
 
     public void generatePDF() {
@@ -190,14 +260,14 @@ public class MainActivity extends AppCompatActivity {
         if (!file.exists()) {
             file.mkdirs();
         }
-        String targetPdf = directory_path+"hello.pdf";
+        String targetPdf = directory_path + "hello.pdf";
         File filePath = new File(targetPdf);
         try {
             document.writeTo(new FileOutputStream(filePath));
             Toast.makeText(this, "Done", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
-            Log.e("main", "error "+e.toString());
-            Toast.makeText(this, "Something wrong: " + e.toString(),  Toast.LENGTH_LONG).show();
+            Log.e("main", "error " + e.toString());
+            Toast.makeText(this, "Something wrong: " + e.toString(), Toast.LENGTH_LONG).show();
         }
         // close the document
         document.close();

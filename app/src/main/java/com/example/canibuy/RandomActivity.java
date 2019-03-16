@@ -20,11 +20,11 @@ public class RandomActivity extends AppCompatActivity {
 
         d.setTitle("Manual expense Input");
 
-//        Switch sw = new Switch(displayPie.this);
+//        Switch sw = new Switch(DashBoard.this);
 //
-//        EditText et1 = new EditText(displayPie.this);
-//        EditText et2 = new EditText(displayPie.this);
-//        EditText et3 = new EditText(displayPie.this);
+//        EditText et1 = new EditText(DashBoard.this);
+//        EditText et2 = new EditText(DashBoard.this);
+//        EditText et3 = new EditText(DashBoard.this);
 
         d.setView(R.layout.ledger_input);
 

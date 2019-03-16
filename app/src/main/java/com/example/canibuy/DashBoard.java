@@ -1,7 +1,6 @@
 package com.example.canibuy;
 
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -19,7 +18,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -46,7 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class displayPie extends AppCompatActivity {
+public class DashBoard extends AppCompatActivity {
 
     DatabaseReference db;
     FireBaseHelper helper;
@@ -65,7 +63,6 @@ public class displayPie extends AppCompatActivity {
         setContentView(R.layout.displaypie);
 
         investment = findViewById(R.id.piechart2);
-
 
         //List View
         //Firebase
@@ -115,11 +112,6 @@ public class displayPie extends AppCompatActivity {
 
         return b;
     }
-
-
-
-
-
     //Display Ledger input
     public void displayInputDialog() {
 
@@ -129,15 +121,15 @@ public class displayPie extends AppCompatActivity {
 
 
 
-//        AlertDialog.Builder d = new AlertDialog.Builder(displayPie.this);
+//        AlertDialog.Builder d = new AlertDialog.Builder(DashBoard.this);
 //
 //        d.setTitle("Manual expense Input");
 
-//        Switch sw = new Switch(displayPie.this);
+//        Switch sw = new Switch(DashBoard.this);
 //
-//        EditText et1 = new EditText(displayPie.this);
-//        EditText et2 = new EditText(displayPie.this);
-//        EditText et3 = new EditText(displayPie.this);
+//        EditText et1 = new EditText(DashBoard.this);
+//        EditText et2 = new EditText(DashBoard.this);
+//        EditText et3 = new EditText(DashBoard.this);
 
 //        d.setView(R.layout.ledger_input);
 //
@@ -179,10 +171,10 @@ public class displayPie extends AppCompatActivity {
                     ammountTxt.setText("");
                     categoryTxt.setText("");
 //
-                    adapter = new CustomAdapter(displayPie.this,helper.retrieveLedger());
+                    adapter = new CustomAdapter(DashBoard.this,helper.retrieveLedger());
                     lv.setAdapter(adapter);}
                 }else{
-                    Toast.makeText(displayPie.this,"Fields are empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DashBoard.this,"Fields are empty", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -320,7 +312,7 @@ public class displayPie extends AppCompatActivity {
         if (file.exists())
         {
             Intent intent=new Intent(Intent.ACTION_VIEW);
-            Uri uri = FileProvider.getUriForFile(displayPie.this,BuildConfig.APPLICATION_ID+ ".my.package.name.provider",file);
+            Uri uri = FileProvider.getUriForFile(DashBoard.this,BuildConfig.APPLICATION_ID+ ".my.package.name.provider",file);
 
             intent.setDataAndType(uri, "application/pdf");
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -332,7 +324,7 @@ public class displayPie extends AppCompatActivity {
             }
             catch(ActivityNotFoundException e)
             {
-                Toast.makeText(displayPie.this, "No Application available to view pdf", Toast.LENGTH_LONG).show();
+                Toast.makeText(DashBoard.this, "No Application available to view pdf", Toast.LENGTH_LONG).show();
             }
         }
     }
