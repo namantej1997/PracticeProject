@@ -90,14 +90,11 @@ public class displayPie extends AppCompatActivity {
 //        setListViewHeightBasedOnChildren(lv);
 
         llScroll = findViewById(R.id.llScroll);
-        FloatingActionButton pdf = (FloatingActionButton)findViewById(R.id.pdf);
-        pdf.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("size"," "+llScroll.getWidth() +"  "+llScroll.getWidth());
-                bitmap = loadBitmapFromView(llScroll, llScroll.getWidth(), llScroll.getHeight());
-                createPdf();
-            }
+        FloatingActionButton pdf = findViewById(R.id.pdf);
+        pdf.setOnClickListener(v -> {
+            Log.d("size"," "+llScroll.getWidth() +"  "+llScroll.getWidth());
+            bitmap = loadBitmapFromView(llScroll, llScroll.getWidth(), llScroll.getHeight());
+            createPdf();
         });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -246,8 +243,6 @@ public class displayPie extends AppCompatActivity {
     }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
-
-
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null)
             return;
@@ -286,7 +281,7 @@ public class displayPie extends AppCompatActivity {
 //        Bitmap bitmap = BitmapFactory.decodeResource(mResources, R.drawable.screenshot);
 
         PdfDocument document = new PdfDocument();
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(convertWidth, convertHighet, 1).create();
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(convertWidth, convertHighet, 2).create();
         PdfDocument.Page page = document.startPage(pageInfo);
 
         Canvas canvas = page.getCanvas();
@@ -301,7 +296,7 @@ public class displayPie extends AppCompatActivity {
         document.finishPage(page);
 
         // write the document content
-        String targetPdf = "/sdcard/pdffromScroll.pdf";
+        String targetPdf = "/sdcard/pdff.pdf";
         File filePath;
         filePath = new File(targetPdf);
         try {
@@ -321,16 +316,15 @@ public class displayPie extends AppCompatActivity {
     }
 
     private void openGeneratedPDF(){
-        File file = new File("/sdcard/pdffromScroll.pdf");
+        File file = new File("/sdcard/pdff.pdf");
         if (file.exists())
         {
             Intent intent=new Intent(Intent.ACTION_VIEW);
             Uri uri = FileProvider.getUriForFile(displayPie.this,BuildConfig.APPLICATION_ID+ ".my.package.name.provider",file);
-           // Uri uri = Uri.fromFile(file);
 
             intent.setDataAndType(uri, "application/pdf");
-//            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-           intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
             try
             {
