@@ -18,6 +18,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -75,16 +76,13 @@ public class DashBoard extends AppCompatActivity {
         //Adapter
         adapter = new CustomAdapter(this, helper.retrieveLedger());
         lv.setAdapter(adapter);
-//        lv.setOnTouchListener(new View.OnTouchListener() {
-//            // Setting on Touch Listener for handling the touch inside ScrollView
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                // Disallow the touch request for parent scroll on touch of child view
-//                v.getParent().requestDisallowInterceptTouchEvent(true);
-//                return false;
-//            }
-//        });
-//        setListViewHeightBasedOnChildren(lv);
+        // Setting on Touch Listener for handling the touch inside ScrollView
+        lv.setOnTouchListener((v, event) -> {
+            // Disallow the touch request for parent scroll on touch of child view
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            return false;
+        });
+        setListViewHeightBasedOnChildren(lv);
 
         llScroll = findViewById(R.id.llScroll);
         FloatingActionButton pdf = findViewById(R.id.pdf);
@@ -181,8 +179,6 @@ public class DashBoard extends AppCompatActivity {
 
         });
 
-
-
         //Pie Chart
         PieChart pieChart = findViewById(R.id.piechart1);
         pieChart.setUsePercentValues(true);
@@ -227,8 +223,6 @@ public class DashBoard extends AppCompatActivity {
 
         pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
         pieChart.animateXY(1400, 1400);
-
-
 
         d.show();
 

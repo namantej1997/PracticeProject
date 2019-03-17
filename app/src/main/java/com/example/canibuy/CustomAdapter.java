@@ -11,7 +11,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class CustomAdapter extends BaseAdapter {
-    //TODO: make a function iterating ledgerList and category percentages for pie
 
     Context c;
     ArrayList<Ledger> ledgerList;
@@ -66,19 +65,4 @@ public class CustomAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public String getTotalBalance() {
-        int total = 0;
-        if (ledgerList != null) {
-            for (Ledger ledger : ledgerList) {
-                int amount = Integer.parseInt(ledger.getAmmount().replaceAll("[^0-9]", ""));
-                if (ledger.isDebited()) {
-                    total -= amount;
-                }
-                else{
-                    total+=amount;
-                }
-            }
-        }
-        return String.valueOf(total);
-    }
 }

@@ -1,15 +1,22 @@
 package com.example.canibuy;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.example.canibuy.Ledger;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
+
 public class FireBaseHelper {
+    //TODO: make a function iterating ledgerList and category percentages for pie
 
     DatabaseReference db;
     Boolean saved;
@@ -70,5 +77,21 @@ public class FireBaseHelper {
             }
         });
         return ledgerList;
+    }
+
+    public String getTotalBalance() {
+        int total = 0;
+        if (ledgerList != null) {
+            for (Ledger ledger : ledgerList) {
+                int amount = Integer.parseInt(ledger.getAmmount().replaceAll("[^0-9]", ""));
+                if (ledger.isDebited()) {
+                    total -= amount;
+                }
+                else{
+                    total+=amount;
+                }
+            }
+        }
+        return String.valueOf(total);
     }
 }

@@ -40,9 +40,9 @@ import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    String[] tableheaders = {"Income", "Expense"};
-    String[][] tableData;
-
+    String[] tableheaders = {"Income            Expense"};
+    //String[][] tableData;
+    CustomAdapter adapter;
     private TextView mTextMessage;
     private FirebaseAuth auth;
 
@@ -114,7 +114,12 @@ public class MainActivity extends AppCompatActivity {
 
         //creating table...
 
-        updateTable();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        FireBaseHelper helper = new FireBaseHelper(mDatabase);
+
+        Toast.makeText(this, ""+helper.getTotalBalance(), Toast.LENGTH_LONG).show();
+
+        updateTable(helper);
 
 
         //recieving messages
@@ -122,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void messageReceived(String messageText) {
                 Log.d("Text", messageText);
-                parseSMS(messageText);
+                parseSMS(messageText, helper);
                 //Toast.makeText(MainActivity.this,"Message: "+messageText,Toast.LENGTH_LONG).show();
             }
         });
@@ -131,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
-    public void parseSMS(String messageText) {
+    public void parseSMS(String messageText, FireBaseHelper helper) {
 
         String category;
         String ammount;
@@ -149,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
                 itemName = "Salary";
             ammount = messageText.replaceAll("[^0-9]", "");
         } else {
-            debited = false;
+            debited = true;
             if (messageText.contains("ola")) {
                 category = "Travel";
                 itemName = "Ola";
@@ -169,13 +174,12 @@ public class MainActivity extends AppCompatActivity {
             ammount = messageText.replaceAll("[^0-9]", "");
         }
         Ledger smsLedger = new Ledger(category, ammount, itemName, debited);
+        Toast.makeText(MainActivity.this,(smsLedger.isDebited())?"Debited: "+ammount:"Credited: "+ammount,Toast.LENGTH_LONG).show();
 
         //Firebase Stuff
 
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        FireBaseHelper helper = new FireBaseHelper(mDatabase);
         helper.saveLedger(smsLedger);
-        updateTable();
+        updateTable(helper);
 
 
         //OLD SMS PARSER
@@ -189,7 +193,6 @@ public class MainActivity extends AppCompatActivity {
 //        String messageToSearch = messageText;
 //        int money = Integer.parseInt(messageToSearch.replaceAll("[^0-9]", ""));
 //
-//        //  Toast.makeText(SMSActivity.this,""+money,Toast.LENGTH_LONG).show();
 //
 //        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 //        Pattern pattern1 = Pattern.compile(regex1, Pattern.CASE_INSENSITIVE);
@@ -209,30 +212,31 @@ public class MainActivity extends AppCompatActivity {
 //        firebaseFirestore.collection("items").add(moneyleft);
     }
 
-    private void updateTable() {
+    private void updateTable(FireBaseHelper helper) {
+
         final TableView<String[]> tb = (TableView<String[]>) findViewById(R.id.tableView);
-        tb.setColumnCount(2);
+        tb.setColumnCount(1);
         tb.setHeaderBackgroundColor(Color.parseColor("#2ecc71"));
         tb.setHeaderAdapter(new SimpleTableHeaderAdapter(this, tableheaders));
-        //tb.setDataAdapter(new SimpleTableDataAdapter(this,tableData));
 
-
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        FireBaseHelper helper = new FireBaseHelper(mDatabase);
         ArrayList<Ledger> ledgerList = helper.retrieveLedger();
-
-        ArrayList<String> creditedArr = new ArrayList<>();
-        ArrayList<String> debitedArr = new ArrayList<>();
-        for (Ledger ledger : ledgerList) {
-            if (ledger.isDebited()) {
-                debitedArr.add(ledger.getAmmount() + " (" + ledger.getItemName() + ")");
-            } else {
-                creditedArr.add(ledger.getAmmount() + " (" + ledger.getItemName() + ")");
+        if (ledgerList != null) {
+            ArrayList<String> expenseArr = new ArrayList<>();
+            for (Ledger ledger : ledgerList) {
+                if (ledger.isDebited()) {
+                    expenseArr.add("    " + ledger.getAmmount() + " (" + ledger.getItemName() + ")");
+                } else {
+                    expenseArr.add(ledger.getAmmount() + " (" + ledger.getItemName() + ")");
+                }
             }
+           // Toast.makeText(this,"I am a disco dancer",Toast.LENGTH_LONG).show();
+            String[][] tableData = new String[expenseArr.size()][1];
+            for (int i = 0; i < expenseArr.size(); i++) {
+                tableData[i][0] = expenseArr.get(i);
+            }
+          //  Toast.makeText(this,"I am a disco dancer",Toast.LENGTH_LONG).show();
+            tb.setDataAdapter(new SimpleTableDataAdapter(this, tableData));
         }
-        tableData[0] = creditedArr.toArray(new String[creditedArr.size()]);
-        tableData[1] = debitedArr.toArray(new String[debitedArr.size()]);
-        tb.setDataAdapter(new SimpleTableDataAdapter(this, tableData));
 
     }
 
