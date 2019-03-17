@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth auth;
     private ProgressDialog progressDialog;
     private TextView reg;
+    private TextView hereClick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         login = (Button) findViewById(R.id.signin);
         progressDialog = new ProgressDialog(this);
         reg = (TextView) findViewById(R.id.register);
+        hereClick = findViewById(R.id.here);
 
         auth = FirebaseAuth.getInstance();
 
@@ -49,6 +51,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         login.setOnClickListener(this);
         reg.setOnClickListener(this);
+        hereClick.setOnClickListener(this);
 
     }
 
@@ -61,6 +64,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (v == reg) {
             finish();
             startActivity(new Intent(this, RegisterActivity.class));
+        }
+
+        if(v == hereClick){
+            finish();
+            startActivity(new Intent(this,PromiseReader.class));
         }
 
     }

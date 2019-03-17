@@ -40,6 +40,8 @@
 
         </activity>
 
+        <activity android:name=".PromiseReader"></activity>
+
         <activity android:name=".RegisterActivity"
             android:label="Registration">
 

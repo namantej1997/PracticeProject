@@ -89,6 +89,32 @@
         android:text="Sign Up"
         android:textSize="15dp"
         android:id="@+id/register"
+
         />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/register"
+        android:layout_marginTop="20dp"
+        android:textSize="15dp"
+        android:text="How we use your data? Read our Data Promise"
+        android:id="@+id/hehe"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/hehe"
+        android:layout_marginLeft="10dp"
+        android:text="here"
+        android:layout_below="@+id/register"
+        android:layout_marginTop="20dp"
+        android:textFontWeight="bold"
+        android:textColor="@color/black"
+        android:id="@+id/here"
+        />
+
+
+
 
 </RelativeLayout>

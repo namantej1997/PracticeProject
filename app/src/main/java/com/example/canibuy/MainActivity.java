@@ -44,8 +44,6 @@ import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
 public class MainActivity extends AppCompatActivity {
 
     String[] tableheaders = {"Income            Expense"};
-    //String[][] tableData;
-    CustomAdapter adapter;
     private TextView mTextMessage;
     private FirebaseAuth auth;
 
@@ -94,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -120,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         FireBaseHelper helper = new FireBaseHelper(mDatabase);
 
-        Toast.makeText(this, ""+helper.getTotalBalance(), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "" + helper.getTotalBalance(), Toast.LENGTH_LONG).show();
 
         updateTable(helper);
 
@@ -177,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             ammount = messageText.replaceAll("[^0-9]", "");
         }
         Ledger smsLedger = new Ledger(category, ammount, itemName, debited);
-        Toast.makeText(MainActivity.this,(smsLedger.isDebited())?"Debited: "+ammount:"Credited: "+ammount,Toast.LENGTH_LONG).show();
+        Toast.makeText(MainActivity.this, (smsLedger.isDebited()) ? "Debited: " + ammount : "Credited: " + ammount, Toast.LENGTH_LONG).show();
 
         //Firebase Stuff
 
@@ -187,36 +184,54 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateTable(FireBaseHelper helper) {
 
+        ProgressBar progressBar;
+        TextView balance;
+
+        progressBar = findViewById(R.id.progressBar2);
+        balance = findViewById(R.id.balance);
+
         final TableView<String[]> tb = (TableView<String[]>) findViewById(R.id.tableView);
         tb.setColumnCount(1);
         tb.setHeaderBackgroundColor(Color.parseColor("#2ecc71"));
         tb.setHeaderAdapter(new SimpleTableHeaderAdapter(this, tableheaders));
-
+        progressBar.setProgress(10);
+        balance.setText("0");
         ArrayList<Ledger> ledgerList = helper.retrieveLedger();
+        int credit = 0;
         if (ledgerList != null) {
             ArrayList<String> expenseArr = new ArrayList<>();
             for (Ledger ledger : ledgerList) {
                 if (ledger.isDebited()) {
-                    expenseArr.add("                    " + ledger.getAmmount() + " (" + ledger.getItemName() + ")");
+                    expenseArr.add("                    Rs. " + ledger.getAmmount() + " (" + ledger.getItemName() + ")");
+                    balance.setText(String.valueOf(Integer.parseInt(balance.getText().toString()) - Integer.parseInt(ledger.getAmmount())));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        progressBar.setProgress(Integer.parseInt(balance.getText().toString()) * 100/credit);
+                    }
                 } else {
-                    expenseArr.add(ledger.getAmmount() + " (" + ledger.getItemName() + ")");
+                    credit += Integer.parseInt(ledger.getAmmount());
+                    expenseArr.add("Rs. " + ledger.getAmmount() + " (" + ledger.getItemName() + ")");
+                    balance.setText(String.valueOf(Integer.parseInt(balance.getText().toString()) + Integer.parseInt(ledger.getAmmount())));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        progressBar.setProgress(Integer.parseInt(balance.getText().toString()) * 100/credit);
+                    }
                 }
             }
-           // Toast.makeText(this,"I am a disco dancer",Toast.LENGTH_LONG).show();
+            // Toast.makeText(this,"I am a disco dancer",Toast.LENGTH_LONG).show();
             String[][] tableData = new String[expenseArr.size()][1];
             for (int i = 0; i < expenseArr.size(); i++) {
                 tableData[i][0] = expenseArr.get(i);
             }
-          //  Toast.makeText(this,"I am a disco dancer",Toast.LENGTH_LONG).show();
+            //  Toast.makeText(this,"I am a disco dancer",Toast.LENGTH_LONG).show();
             tb.setDataAdapter(new SimpleTableDataAdapter(this, tableData));
         }
-        int totalBalance = Integer.parseInt(helper.getTotalBalance());
-        ProgressBar progressBar = findViewById(R.id.progressBar2);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            progressBar.setProgress(totalBalance,true);
-        }
-        TextView balance = findViewById(R.id.balance);
-        balance.setText(String.valueOf(balance));
+
+//        int totalBalance = Integer.parseInt(helper.getTotalBalance());
+//        ProgressBar progressBar = findViewById(R.id.progressBar2);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            progressBar.setProgress(totalBalance,true);
+//        }
+//        TextView balance = findViewById(R.id.balance);
+//        balance.setText(String.valueOf(balance));
     }
 
     public void generatePDF() {

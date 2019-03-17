@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Our Data Promise"
+        android:id="@+id/tt"
+        android:layout_marginBottom="40dp"
+        android:textFontWeight="bold"
+        android:textColor="@color/black"
+        android:textSize="30dp"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:textFontWeight="bold"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+
+        android:layout_below="@+id/tt"
+
+        android:text="How do we use the data we collect from Individual Investors ?
+
+Our focus is on serving your needs, that of the Individual Investor.
+With respect to the data that you share with us through this App:
+We use this information to better serve you and help you attain financial wellness by delivering a more personalized experience.
+We do not sell this information.
+We do not require or use any personal information about our individual investor clients"/>
+
+</RelativeLayout>
