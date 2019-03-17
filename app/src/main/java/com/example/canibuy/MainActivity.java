@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_home:
                     Intent display;
                     display = new Intent(getApplicationContext(), DashBoard.class);
+
                     startActivity(display);
                     return true;
                 case R.id.navigation_dashboard:
@@ -167,7 +168,15 @@ public class MainActivity extends AppCompatActivity {
             } else if (messageText.contains("bookmyshow")) {
                 category = "Entertainment";
                 itemName = "Book My Show";
-            } else {
+            } else if(messageText.contains("shares of blackrock")){
+                category = "Investments";
+                itemName ="Blackrock shares";
+            }
+            else if(messageText.contains("shares of ibm")){
+                category = "Investments";
+                itemName ="IBM shares";
+            }
+            else {
                 category = "Others";
                 itemName = "Miscellaneous";
             }

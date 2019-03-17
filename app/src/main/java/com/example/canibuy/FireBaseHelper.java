@@ -95,18 +95,20 @@ public class FireBaseHelper {
         return String.valueOf(total);
     }
 
-    public HashMap getPieValues() {
-        HashMap<String, Float> pieValues = new HashMap<>();
-        int total = Integer.parseInt(getTotalBalance());
-        if (ledgerList != null) {
-            for (Ledger ledger : ledgerList) {
-                if (pieValues.get(ledger.getCategory()) == null) {
-                    pieValues.put(ledger.getCategory(), Float.parseFloat(ledger.getAmmount()) / total);
-                } else {
-                    pieValues.put(ledger.category, pieValues.get(ledger.getCategory()) + Float.parseFloat(ledger.getAmmount()) / total);
-                }
-            }
-        }
-        return pieValues;
+    public void getPieValues() {
+//        HashMap<String, Float> pieValues = new HashMap<>();
+//        int total = Integer.parseInt(getTotalBalance());
+//        if (ledgerList != null) {
+//            for (Ledger ledger : ledgerList) {
+//                if (pieValues.get(ledger.getCategory()) == null) {
+//                    pieValues.put(ledger.getCategory(), Float.parseFloat(ledger.getAmmount()) / total);
+//                } else {
+//                    pieValues.put(ledger.category, pieValues.get(ledger.getCategory()) + Float.parseFloat(ledger.getAmmount()) / total);
+//                }
+//            }
+//        }
+//        return pieValues;
+
+
     }
 }

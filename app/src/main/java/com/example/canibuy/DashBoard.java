@@ -58,6 +58,10 @@ public class DashBoard extends AppCompatActivity {
     PieChart investment;
     private Bitmap bitmap;
     ConstraintLayout llScroll;
+    int other =1,invest =0,trav =0,credit,bkshare,ibmshare;
+    int totalExpense = 1;
+    FloatingActionButton fab;
+    int totalshareExpense=1;
 
 
     @Override
@@ -66,6 +70,7 @@ public class DashBoard extends AppCompatActivity {
         setContentView(R.layout.displaypie);
 
         investment = findViewById(R.id.piechart2);
+        fab = findViewById(R.id.fab);
 
         //List View
         //Firebase
@@ -99,6 +104,8 @@ public class DashBoard extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 displayInputDialog();
+                makepie();
+                makepieInvest();
             }
         });
 
@@ -121,15 +128,26 @@ public class DashBoard extends AppCompatActivity {
         TextView category;
         TextView amount;
 
-        HashMap<String, Float> pieValues = helper.getPieValues();
+//        HashMap<String, Float> pieValues = helper.getPieValues();
+        setValues();
 
-        for (Map.Entry<String, Float> e : pieValues.entrySet()) {
-            value.add(new PieEntry(e.getValue(), e.getKey()));
-        }
+//        for (Map.Entry<String, Float> e : pieValues.entrySet()) {
+//            value.add(new PieEntry(e.getValue(), e.getKey()));
+//        }
 
-//        value.add(new PieEntry(40f, "Bank"));
-//        value.add(new PieEntry(20f, "Food"));
-//        value.add(new PieEntry(35f, "Salary"));
+
+        int travelpercent = trav*100/totalExpense;
+        int investmentpercent = invest*100/totalExpense;
+        int otherpercent = other*100/totalExpense;
+
+
+        Log.i("travel cost",""+travelpercent);
+        Log.i("invested cost",""+investmentpercent);
+        Log.i("other cost",""+otherpercent);
+
+        value.add(new PieEntry((float)travelpercent, "Travel"));
+        value.add(new PieEntry((float)otherpercent, "Miscellaneous"));
+       value.add(new PieEntry((float)investmentpercent, "Investments"));
 //        value.add(new PieEntry(5f, "Travel"));
 
         PieDataSet pieDataSet = new PieDataSet(value, "Spending");
@@ -138,6 +156,152 @@ public class DashBoard extends AppCompatActivity {
 
         pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
         pieChart.animateXY(1400, 1400);
+
+
+    }
+
+    private void makepieInvest() {
+        PieChart pieChart = findViewById(R.id.piechart2);
+        pieChart.setUsePercentValues(true);
+
+        Description desc = new Description();
+        desc.setText("Estimated Graph");
+        desc.setTextSize(10f);
+
+        pieChart.setDescription(desc);
+        pieChart.setHoleRadius(20f);
+        pieChart.setTransparentCircleRadius(20f);
+
+        List<PieEntry> value = new ArrayList<>();
+
+        ArrayList<Ledger> ledgerList = helper.retrieveLedger();
+        if (ledgerList != null) {
+
+            for (Ledger ledger : ledgerList) {
+                if (ledger.isDebited()) {
+
+
+
+                    switch (ledger.getItemName()){
+                        case "Blackrock shares":
+                            bkshare+=Integer.parseInt(ledger.getAmmount());
+                            break;
+                        case "IBM shares":
+                            ibmshare+=Integer.parseInt(ledger.getAmmount());
+                            break;
+
+                    }
+
+
+                }
+
+
+            }
+
+            totalshareExpense = bkshare+ibmshare;
+        }
+
+        int percentblkshare = bkshare*100/totalshareExpense;
+        int percentibmshare = ibmshare*100/totalshareExpense;
+
+        value.add(new PieEntry((float)percentblkshare, "Blackrock"));
+        value.add(new PieEntry((float)percentibmshare, "IBM"));
+
+
+        PieDataSet pieDataSet = new PieDataSet(value, "Spending");
+        PieData pieData = new PieData(pieDataSet);
+        pieChart.setData(pieData);
+
+        pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+        pieChart.animateXY(1400, 1400);
+
+
+
+    }
+
+    private void makepie() {
+        PieChart pieChart = findViewById(R.id.piechart1);
+        pieChart.setUsePercentValues(true);
+
+        Description desc = new Description();
+        desc.setText("Estimated Graph");
+        desc.setTextSize(10f);
+
+        pieChart.setDescription(desc);
+        pieChart.setHoleRadius(20f);
+        pieChart.setTransparentCircleRadius(20f);
+
+        List<PieEntry> value = new ArrayList<>();
+
+        View v;
+        TextView category;
+        TextView amount;
+
+//        HashMap<String, Float> pieValues = helper.getPieValues();
+        setValues();
+
+//        for (Map.Entry<String, Float> e : pieValues.entrySet()) {
+//            value.add(new PieEntry(e.getValue(), e.getKey()));
+//        }
+
+
+        int travelpercent = trav*100/totalExpense;
+        int investmentpercent = invest*100/totalExpense;
+        int otherpercent = other*100/totalExpense;
+
+
+        Log.i("travel cost",""+travelpercent);
+        Log.i("invested cost",""+investmentpercent);
+        Log.i("other cost",""+otherpercent);
+
+        value.add(new PieEntry((float)travelpercent, "Travel"));
+        value.add(new PieEntry((float)otherpercent, "Miscellaneous"));
+        value.add(new PieEntry((float)investmentpercent, "Investments"));
+//        value.add(new PieEntry(5f, "Travel"));
+
+        PieDataSet pieDataSet = new PieDataSet(value, "Spending");
+        PieData pieData = new PieData(pieDataSet);
+        pieChart.setData(pieData);
+
+        pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+        pieChart.animateXY(1400, 1400);
+    }
+
+    private void setValues() {
+
+        ArrayList<Ledger> ledgerList = helper.retrieveLedger();
+        if (ledgerList != null) {
+
+            for (Ledger ledger : ledgerList) {
+                if (ledger.isDebited()) {
+
+
+
+                    switch (ledger.getCategory()){
+                       case "Others":
+                            other+=Integer.parseInt(ledger.getAmmount());
+                            break;
+                        case "Travel":
+                            trav+=Integer.parseInt(ledger.getAmmount());
+                            break;
+                        case "Investments":
+                            invest+=Integer.parseInt(ledger.getAmmount());
+                            break;
+                    }
+
+
+                }
+                else {
+                    credit += Integer.parseInt(ledger.getAmmount());
+
+
+                }
+
+            }
+
+            totalExpense = other+invest+trav;
+        }
+
 
 
     }
