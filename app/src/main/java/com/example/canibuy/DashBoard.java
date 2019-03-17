@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,10 +59,17 @@ public class DashBoard extends AppCompatActivity {
     PieChart investment;
     private Bitmap bitmap;
     ConstraintLayout llScroll;
-    int other =1,invest =0,trav =0,credit,bkshare,ibmshare;
+    int other =1,invest =0,trav =0,credit,bkshare,ibmshare,totalPackage;
     int totalExpense = 1;
-    FloatingActionButton fab;
+    FloatingActionButton fab,refresh;
     int totalshareExpense=1;
+    SeekBar other1;
+    SeekBar travel1;
+    SeekBar investment1;
+    TextView insight1,insight2,insight3,balance;
+
+
+
 
 
     @Override
@@ -71,6 +79,16 @@ public class DashBoard extends AppCompatActivity {
 
         investment = findViewById(R.id.piechart2);
         fab = findViewById(R.id.fab);
+        refresh = findViewById(R.id.refresh);
+        other1 = findViewById(R.id.other);
+        travel1 = findViewById(R.id.travel);
+        investment1 = findViewById(R.id.investments);
+        insight1 = findViewById(R.id.insightCat1);
+        insight2 = findViewById(R.id.insightCat2);
+        insight3 = findViewById(R.id.insightCat3);
+        balance = findViewById(R.id.textView4);
+
+
 
         //List View
         //Firebase
@@ -104,6 +122,14 @@ public class DashBoard extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 displayInputDialog();
+
+
+            }
+        });
+
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 makepie();
                 makepieInvest();
             }
@@ -159,6 +185,8 @@ public class DashBoard extends AppCompatActivity {
 
 
     }
+
+
 
     private void makepieInvest() {
         PieChart pieChart = findViewById(R.id.piechart2);
@@ -249,10 +277,26 @@ public class DashBoard extends AppCompatActivity {
         int investmentpercent = invest*100/totalExpense;
         int otherpercent = other*100/totalExpense;
 
+        travel1.setProgress(travelpercent);
+        investment1.setProgress(investmentpercent);
+        other1.setProgress(otherpercent);
 
-        Log.i("travel cost",""+travelpercent);
-        Log.i("invested cost",""+investmentpercent);
-        Log.i("other cost",""+otherpercent);
+
+        if(travelpercent>25){
+            insight1.setText("You should cut down the expense on Travelling");
+        }else{
+            insight1.setText("Travelling Expense is under control");
+        }
+        if(investmentpercent<5){
+            insight3.setText("You should start investing more percent of your income");
+        }else{
+            insight3.setText("Money goes in investments looks good");
+        }
+        if(otherpercent>75){
+            insight2.setText("Please cut down the Miscellaneous Costs and start saving");
+        }else{
+            insight2.setText("Miscellaneous expense under control");
+        }
 
         value.add(new PieEntry((float)travelpercent, "Travel"));
         value.add(new PieEntry((float)otherpercent, "Miscellaneous"));
@@ -275,7 +319,7 @@ public class DashBoard extends AppCompatActivity {
             for (Ledger ledger : ledgerList) {
                 if (ledger.isDebited()) {
 
-
+                    totalPackage+=Integer.parseInt(ledger.getAmmount());
 
                     switch (ledger.getCategory()){
                        case "Others":
@@ -301,7 +345,11 @@ public class DashBoard extends AppCompatActivity {
 
             totalExpense = other+invest+trav;
         }
+        Log.i("Total amount creditted",""+credit);
+        Log.i("Total amount debitted",""+totalExpense);
 
+        int b=credit-totalPackage;
+        balance.setText(""+b);
 
 
     }

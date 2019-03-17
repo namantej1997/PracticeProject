@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         updateTable(helper);
 
 
+
         //recieving messages
         SmsReceiver.bindListener(new SmsListener() {
             @Override
