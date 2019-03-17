@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<String> expenseArr = new ArrayList<>();
             for (Ledger ledger : ledgerList) {
                 if (ledger.isDebited()) {
-                    expenseArr.add("    " + ledger.getAmmount() + " (" + ledger.getItemName() + ")");
+                    expenseArr.add("            " + ledger.getAmmount() + " (" + ledger.getItemName() + ")");
                 } else {
                     expenseArr.add(ledger.getAmmount() + " (" + ledger.getItemName() + ")");
                 }
