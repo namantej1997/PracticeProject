@@ -33,13 +33,9 @@ public class Scanactivity extends AppCompatActivity {
     private FirebaseFirestore firebaseFirestore;
 
 
-
-
-
     private EditText editText;
 
     private Button insert;
-
 
 
     @Override
@@ -51,32 +47,29 @@ public class Scanactivity extends AppCompatActivity {
 
 //
 
-firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         qrScan = new IntentIntegrator(this);
 
-            }
+    }
 
-    public void scanQRCode(View view){
+    public void scanQRCode(View view) {
         qrScan.initiateScan();
     }
 
 
-
-
-    public void scanBills(View view){
-        startActivity(new Intent(this,LaunchCameraActivity.class));
+    public void scanBills(View view) {
+        startActivity(new Intent(this, LaunchCameraActivity.class));
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if(result!=null){
-            if(result.getContents() == null){
-                Toast.makeText(this,"Result not found",Toast.LENGTH_SHORT).show();
-            }
-            else {
-                try{
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(this, "Result not found", Toast.LENGTH_SHORT).show();
+            } else {
+                try {
                     JSONObject obj = new JSONObject(result.getContents());
                     textView.setText(obj.getString("address"));
                 } catch (JSONException e) {
@@ -85,18 +78,17 @@ firebaseFirestore = FirebaseFirestore.getInstance();
                     int price = 2000;
                     Map<String, Integer> itemval = new HashMap<>();
 
-                    itemval.put(code,price);
+                    itemval.put(code, price);
 
                     firebaseFirestore.collection("items").add(itemval);
 
-                    Toast.makeText(this,result.getContents(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, result.getContents(), Toast.LENGTH_SHORT).show();
 
 
                 }
             }
-        }
-        else{
-            super.onActivityResult(requestCode, resultCode,data);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 }

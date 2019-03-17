@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth auth;
     private ProgressDialog progressDialog;
     private TextView reg;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,10 +39,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         auth = FirebaseAuth.getInstance();
 
-        if(auth.getCurrentUser()!=null){
+        if (auth.getCurrentUser() != null) {
             finish();
             Intent Action;
-            Action = new Intent(getApplicationContext(),MainActivity.class);
+            Action = new Intent(getApplicationContext(), MainActivity.class);
 
             startActivity(Action);
         }
@@ -50,15 +51,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         reg.setOnClickListener(this);
 
     }
+
     @Override
     public void onClick(View v) {
-        if(v==login){
+        if (v == login) {
             userLogin();
         }
 
-        if(v==reg){
+        if (v == reg) {
             finish();
-            startActivity(new Intent(this,RegisterActivity.class));
+            startActivity(new Intent(this, RegisterActivity.class));
         }
 
     }
@@ -67,33 +69,32 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String email = uname.getText().toString().trim();
         String password1 = password.getText().toString().trim();
 
-        if(TextUtils.isEmpty(email)){
-            Toast.makeText(this,"Please enter user email",Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(this, "Please enter user email", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if(TextUtils.isEmpty(password1)){
-            Toast.makeText(this,"Please enter password",Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(password1)) {
+            Toast.makeText(this, "Please enter password", Toast.LENGTH_SHORT).show();
             return;
         }
 
         progressDialog.setMessage("Logining In User...");
         progressDialog.show();
 
-        auth.signInWithEmailAndPassword(email,password1)
+        auth.signInWithEmailAndPassword(email, password1)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressDialog.dismiss();
-                        if(task.isSuccessful()){
-                            Toast.makeText(LoginActivity.this,"Login success",Toast.LENGTH_SHORT).show();
+                        if (task.isSuccessful()) {
+                            Toast.makeText(LoginActivity.this, "Login success", Toast.LENGTH_SHORT).show();
                             Intent Action;
-                            Action = new Intent(getApplicationContext(),MainActivity.class);
+                            Action = new Intent(getApplicationContext(), MainActivity.class);
 
                             startActivity(Action);
-                        }
-                        else{
-                            Toast.makeText(LoginActivity.this,"Could not Login..",Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Could not Login..", Toast.LENGTH_SHORT).show();
 
                         }
                     }

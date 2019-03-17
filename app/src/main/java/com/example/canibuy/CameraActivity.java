@@ -33,19 +33,19 @@ public class CameraActivity extends AppCompatActivity {
         textView = (TextView) findViewById(R.id.textViewcam);
 
         TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
-        if(!textRecognizer.isOperational()){
-            Toast.makeText(this,"Not Available", Toast.LENGTH_SHORT).show();
-        }else{
-            cameraSource = new CameraSource.Builder(getApplicationContext(),textRecognizer).setFacing(CameraSource.CAMERA_FACING_BACK)
+        if (!textRecognizer.isOperational()) {
+            Toast.makeText(this, "Not Available", Toast.LENGTH_SHORT).show();
+        } else {
+            cameraSource = new CameraSource.Builder(getApplicationContext(), textRecognizer).setFacing(CameraSource.CAMERA_FACING_BACK)
                     .setAutoFocusEnabled(true)
                     .build();
 
             surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override
                 public void surfaceCreated(SurfaceHolder holder) {
-                    try{
+                    try {
                         cameraSource.start(surfaceView.getHolder());
-                    } catch (IOException e){
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -57,7 +57,7 @@ public class CameraActivity extends AppCompatActivity {
 
                 @Override
                 public void surfaceDestroyed(SurfaceHolder holder) {
-                        cameraSource.stop();
+                    cameraSource.stop();
                 }
             });
         }
@@ -71,12 +71,12 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void receiveDetections(Detector.Detections<TextBlock> detections) {
                 final SparseArray<TextBlock> items = detections.getDetectedItems();
-                if(items.size()!=0){
+                if (items.size() != 0) {
                     textView.post(new Runnable() {
                         @Override
                         public void run() {
                             StringBuilder stringBuilder = new StringBuilder();
-                            for(int i=0;i<items.size();i++){
+                            for (int i = 0; i < items.size(); i++) {
                                 TextBlock item = items.valueAt(i);
                                 stringBuilder.append(item.getValue());
                                 stringBuilder.append("\n");
@@ -91,7 +91,7 @@ public class CameraActivity extends AppCompatActivity {
         });
     }
 
-    public void screenShot(View view){
+    public void screenShot(View view) {
 //        Intent intent;
 //        intent = new Intent(this,Scanactivity.class);
 
@@ -100,13 +100,14 @@ public class CameraActivity extends AppCompatActivity {
         billString = parseString(billString);
 
         // Send billString number(regex remove any characters) to firebase
-        Toast.makeText(this,"Price: "+billString,Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Price: " + billString, Toast.LENGTH_LONG).show();
 
     }
+
     public String parseString(String stringBuilder) {
         String[] strArray = stringBuilder.split("\n");
         StringBuilder finalResult = new StringBuilder();
-        for(String line : strArray) {
+        for (String line : strArray) {
             if (line.startsWith("MRP")) {
                 String[] arr = line.split(" ");
                 return arr[arr.length - 1];

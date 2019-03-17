@@ -6,7 +6,8 @@ public class Ledger {
     String itemName;
     boolean debited;
 
-    public Ledger(){}
+    public Ledger() {
+    }
 
     public Ledger(String category, String ammount, String itemName, boolean debited) {
         this.category = category;

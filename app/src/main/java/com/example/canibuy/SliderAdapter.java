@@ -39,8 +39,8 @@ public class SliderAdapter extends PagerAdapter {
             "provides you with the analysis of your portfolio report"
     };
 
-    public SliderAdapter(Context context){
-        this.context=context;
+    public SliderAdapter(Context context) {
+        this.context = context;
     }
 
     @Override
@@ -52,14 +52,14 @@ public class SliderAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
-        return (view==(LinearLayout)o);
+        return (view == (LinearLayout) o);
     }
 
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.slide,container,false);
+        View view = inflater.inflate(R.layout.slide, container, false);
 
         ImageView imgslide = (ImageView) view.findViewById(R.id.slideimg);
         TextView txttitle = (TextView) view.findViewById(R.id.txttitle);

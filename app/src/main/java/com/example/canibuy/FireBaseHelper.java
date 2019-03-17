@@ -12,6 +12,7 @@ import com.example.canibuy.Ledger;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
@@ -33,23 +34,23 @@ public class FireBaseHelper {
             try {
                 db.child("Ledger").push().setValue(ledger);
                 saved = true;
-            }catch(DatabaseException e){
+            } catch (DatabaseException e) {
                 e.printStackTrace();
-                saved=false;
+                saved = false;
             }
         }
         return saved;
     }
 
-    private void fetchLedger(DataSnapshot dataSnapshot){
+    private void fetchLedger(DataSnapshot dataSnapshot) {
         ledgerList.clear();
-        for(DataSnapshot ds : dataSnapshot.getChildren()){
+        for (DataSnapshot ds : dataSnapshot.getChildren()) {
             Ledger ledger = ds.getValue(Ledger.class);
             ledgerList.add(ledger);
         }
     }
 
-    public ArrayList<Ledger> retrieveLedger(){
+    public ArrayList<Ledger> retrieveLedger() {
         db.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -86,12 +87,26 @@ public class FireBaseHelper {
                 int amount = Integer.parseInt(ledger.getAmmount().replaceAll("[^0-9]", ""));
                 if (ledger.isDebited()) {
                     total -= amount;
-                }
-                else{
-                    total+=amount;
+                } else {
+                    total += amount;
                 }
             }
         }
         return String.valueOf(total);
+    }
+
+    public HashMap getPieValues() {
+        HashMap<String, Float> pieValues = new HashMap<>();
+        int total = Integer.parseInt(getTotalBalance());
+        if (ledgerList != null) {
+            for (Ledger ledger : ledgerList) {
+                if (pieValues.get(ledger.getCategory()) == null) {
+                    pieValues.put(ledger.getCategory(), Float.parseFloat(ledger.getAmmount()) / total);
+                } else {
+                    pieValues.put(ledger.category, pieValues.get(ledger.getCategory()) + Float.parseFloat(ledger.getAmmount()) / total);
+                }
+            }
+        }
+        return pieValues;
     }
 }

@@ -15,16 +15,10 @@ public class RandomActivity extends AppCompatActivity {
 
     }
 
-    public void show(View view){
+    public void show(View view) {
         AlertDialog.Builder d = new AlertDialog.Builder(RandomActivity.this);
 
         d.setTitle("Manual expense Input");
-
-//        Switch sw = new Switch(DashBoard.this);
-//
-//        EditText et1 = new EditText(DashBoard.this);
-//        EditText et2 = new EditText(DashBoard.this);
-//        EditText et3 = new EditText(DashBoard.this);
 
         d.setView(R.layout.ledger_input);
 

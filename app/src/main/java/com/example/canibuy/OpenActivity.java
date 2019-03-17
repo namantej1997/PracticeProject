@@ -28,8 +28,8 @@ public class OpenActivity extends AppCompatActivity {
         mSlideViewPager.setAdapter(sliderAdapter);
     }
 
-    public void goLogin(View view){
+    public void goLogin(View view) {
         finish();
-        startActivity(new Intent(this,LoginActivity.class));
+        startActivity(new Intent(this, LoginActivity.class));
     }
 }

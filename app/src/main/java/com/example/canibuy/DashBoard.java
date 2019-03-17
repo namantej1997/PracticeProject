@@ -43,7 +43,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DashBoard extends AppCompatActivity {
 
@@ -87,7 +89,7 @@ public class DashBoard extends AppCompatActivity {
         llScroll = findViewById(R.id.llScroll);
         FloatingActionButton pdf = findViewById(R.id.pdf);
         pdf.setOnClickListener(v -> {
-            Log.d("size"," "+llScroll.getWidth() +"  "+llScroll.getWidth());
+            Log.d("size", " " + llScroll.getWidth() + "  " + llScroll.getWidth());
             bitmap = loadBitmapFromView(llScroll, llScroll.getWidth(), llScroll.getHeight());
             createPdf();
         });
@@ -100,84 +102,6 @@ public class DashBoard extends AppCompatActivity {
             }
         });
 
-
-    }
-
-    public static Bitmap loadBitmapFromView(View v, int width, int height) {
-        Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        v.draw(c);
-
-        return b;
-    }
-    //Display Ledger input
-    public void displayInputDialog() {
-
-        Dialog d = new Dialog(this);
-        d.setTitle("Save To Firebase");
-        d.setContentView(R.layout.ledger_input);
-
-
-
-//        AlertDialog.Builder d = new AlertDialog.Builder(DashBoard.this);
-//
-//        d.setTitle("Manual expense Input");
-
-//        Switch sw = new Switch(DashBoard.this);
-//
-//        EditText et1 = new EditText(DashBoard.this);
-//        EditText et2 = new EditText(DashBoard.this);
-//        EditText et3 = new EditText(DashBoard.this);
-
-//        d.setView(R.layout.ledger_input);
-//
-//        AlertDialog a = d.create();
-//        a.show();
-
-
-
-//        d.setContentView(R.layout.ledger_input);
-//
-        debitedBool = (Switch) d.findViewById(R.id.debitedBool);
-        itemTxt = (EditText) d.findViewById(R.id.Item);
-        ammountTxt = (EditText) d.findViewById(R.id.amount);
-        categoryTxt =  d.findViewById(R.id.category);
-//
-        Button saveBtn =  d.findViewById(R.id.saveBtn);
-
-        //Save
-        saveBtn.setOnClickListener((v) -> {
-
-            //Get data
-            Boolean debited = !debitedBool.isChecked();
-            String item = itemTxt.getText().toString();
-            String amount = ammountTxt.getText().toString();
-            String category = categoryTxt.getText().toString();
-
-            Ledger ledger = new Ledger();
-            ledger.setDebited(debited);
-            ledger.setItemName(item);
-            ledger.setAmmount(amount);
-            ledger.setCategory(category);
-//
-            if (item != null && amount != null && category != null && item.length()>0 && amount.length()>0 && category.length()>0){
-//                Ledger ledger = new Ledger(category, amount, item, debited);
-                if(helper.saveLedger(ledger)){
-//
-                    debitedBool.setChecked(false);
-                    itemTxt.setText("");
-                    ammountTxt.setText("");
-                    categoryTxt.setText("");
-//
-                    adapter = new CustomAdapter(DashBoard.this,helper.retrieveLedger());
-                    lv.setAdapter(adapter);}
-                }else{
-                    Toast.makeText(DashBoard.this,"Fields are empty", Toast.LENGTH_SHORT).show();
-                }
-
-
-
-        });
 
         //Pie Chart
         PieChart pieChart = findViewById(R.id.piechart1);
@@ -197,25 +121,16 @@ public class DashBoard extends AppCompatActivity {
         TextView category;
         TextView amount;
 
-        int total=0;
-        for (int i = 0; i < lv.getCount(); i++) {
-            v = lv.getChildAt(i);
-            amount = v.findViewById(R.id.ammount);
-            total+=Integer.parseInt(amount.getText().toString());
-            Log.i("Total: ",String.valueOf(total));
+        HashMap<String, Float> pieValues = helper.getPieValues();
+
+        for (Map.Entry<String, Float> e : pieValues.entrySet()) {
+            value.add(new PieEntry(e.getValue(), e.getKey()));
         }
 
-        for (int i = 0; i < lv.getCount(); i++) {
-            v = lv.getChildAt(i);
-            category =  v.findViewById(R.id.categoryModel);
-            amount = v.findViewById(R.id.ammount);
-            value.add(new PieEntry((float)Integer.parseInt(amount.getText().toString())*100/total,category.getText().toString()));
-        }
-
-        value.add(new PieEntry(40f, "Bank"));
-        value.add(new PieEntry(20f, "Food"));
-        value.add(new PieEntry(35f, "Salary"));
-        value.add(new PieEntry(5f, "Travel"));
+//        value.add(new PieEntry(40f, "Bank"));
+//        value.add(new PieEntry(20f, "Food"));
+//        value.add(new PieEntry(35f, "Salary"));
+//        value.add(new PieEntry(5f, "Travel"));
 
         PieDataSet pieDataSet = new PieDataSet(value, "Spending");
         PieData pieData = new PieData(pieDataSet);
@@ -224,8 +139,67 @@ public class DashBoard extends AppCompatActivity {
         pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
         pieChart.animateXY(1400, 1400);
 
-        d.show();
 
+    }
+
+    public static Bitmap loadBitmapFromView(View v, int width, int height) {
+        Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        v.draw(c);
+
+        return b;
+    }
+
+    //Display Ledger input
+    public void displayInputDialog() {
+
+        Dialog d = new Dialog(this);
+        d.setTitle("Save To Firebase");
+        d.setContentView(R.layout.ledger_input);
+
+        debitedBool = (Switch) d.findViewById(R.id.debitedBool);
+        itemTxt = (EditText) d.findViewById(R.id.Item);
+        ammountTxt = (EditText) d.findViewById(R.id.amount);
+        categoryTxt = d.findViewById(R.id.category);
+//
+        Button saveBtn = d.findViewById(R.id.saveBtn);
+
+        //Save
+        saveBtn.setOnClickListener((v) -> {
+
+            //Get data
+            Boolean debited = !debitedBool.isChecked();
+            String item = itemTxt.getText().toString();
+            String amount = ammountTxt.getText().toString();
+            String category = categoryTxt.getText().toString();
+
+            Ledger ledger = new Ledger();
+            ledger.setDebited(debited);
+            ledger.setItemName(item);
+            ledger.setAmmount(amount);
+            ledger.setCategory(category);
+//
+            if (item != null && amount != null && category != null && item.length() > 0 && amount.length() > 0 && category.length() > 0) {
+//                Ledger ledger = new Ledger(category, amount, item, debited);
+                if (helper.saveLedger(ledger)) {
+//
+                    debitedBool.setChecked(false);
+                    itemTxt.setText("");
+                    ammountTxt.setText("");
+                    categoryTxt.setText("");
+//
+                    adapter = new CustomAdapter(DashBoard.this, helper.retrieveLedger());
+                    lv.setAdapter(adapter);
+                }
+            } else {
+                Toast.makeText(DashBoard.this, "Fields are empty", Toast.LENGTH_SHORT).show();
+            }
+
+
+        });
+
+
+        d.show();
     }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
@@ -238,7 +212,7 @@ public class DashBoard extends AppCompatActivity {
         View view = null;
         for (int i = 0; i < listAdapter.getCount(); i++) {
             view = listAdapter.getView(i, view, listView);
-            if (i == 0){
+            if (i == 0) {
                 view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
 
             }
@@ -252,14 +226,13 @@ public class DashBoard extends AppCompatActivity {
     }
 
 
-
-    private void createPdf(){
+    private void createPdf() {
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         //  Display display = wm.getDefaultDisplay();
         DisplayMetrics displaymetrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        float hight = displaymetrics.heightPixels ;
-        float width = displaymetrics.widthPixels ;
+        float hight = displaymetrics.heightPixels;
+        float width = displaymetrics.widthPixels;
 
         int convertHighet = (int) hight, convertWidth = (int) width;
 
@@ -278,7 +251,7 @@ public class DashBoard extends AppCompatActivity {
         bitmap = Bitmap.createScaledBitmap(bitmap, convertWidth, convertHighet, true);
 
         paint.setColor(Color.BLUE);
-        canvas.drawBitmap(bitmap, 0, 0 , null);
+        canvas.drawBitmap(bitmap, 0, 0, null);
         document.finishPage(page);
 
         // write the document content
@@ -301,23 +274,19 @@ public class DashBoard extends AppCompatActivity {
 
     }
 
-    private void openGeneratedPDF(){
+    private void openGeneratedPDF() {
         File file = new File("/sdcard/pdff.pdf");
-        if (file.exists())
-        {
-            Intent intent=new Intent(Intent.ACTION_VIEW);
-            Uri uri = FileProvider.getUriForFile(DashBoard.this,BuildConfig.APPLICATION_ID+ ".my.package.name.provider",file);
+        if (file.exists()) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            Uri uri = FileProvider.getUriForFile(DashBoard.this, BuildConfig.APPLICATION_ID + ".my.package.name.provider", file);
 
             intent.setDataAndType(uri, "application/pdf");
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-            try
-            {
+            try {
                 startActivity(intent);
-            }
-            catch(ActivityNotFoundException e)
-            {
+            } catch (ActivityNotFoundException e) {
                 Toast.makeText(DashBoard.this, "No Application available to view pdf", Toast.LENGTH_LONG).show();
             }
         }

@@ -7,15 +7,18 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -180,36 +183,6 @@ public class MainActivity extends AppCompatActivity {
 
         helper.saveLedger(smsLedger);
         updateTable(helper);
-
-
-        //OLD SMS PARSER
-//        Log.i("Text", messageText);
-//
-//
-//        String regex = "credited";
-//        String regex1 = "debited";
-//
-//
-//        String messageToSearch = messageText;
-//        int money = Integer.parseInt(messageToSearch.replaceAll("[^0-9]", ""));
-//
-//
-//        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-//        Pattern pattern1 = Pattern.compile(regex1, Pattern.CASE_INSENSITIVE);
-//
-//        Matcher matcher = pattern.matcher(messageToSearch);
-//        Matcher matcher1 = pattern1.matcher(messageToSearch);
-//        Map<String, Integer> moneyleft = new HashMap<>();
-//
-//        if (matcher.find()) {
-//            moneyleft.put(regex, money);
-//            Toast.makeText(MainActivity.this, "" + regex + "  " + money, Toast.LENGTH_LONG).show();
-//        } else if (matcher1.find()) {
-//            moneyleft.put(regex1, money);
-//            Toast.makeText(MainActivity.this, "" + regex1 + "  " + money, Toast.LENGTH_LONG).show();
-//        }
-//
-//        firebaseFirestore.collection("items").add(moneyleft);
     }
 
     private void updateTable(FireBaseHelper helper) {
@@ -224,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<String> expenseArr = new ArrayList<>();
             for (Ledger ledger : ledgerList) {
                 if (ledger.isDebited()) {
-                    expenseArr.add("            " + ledger.getAmmount() + " (" + ledger.getItemName() + ")");
+                    expenseArr.add("                    " + ledger.getAmmount() + " (" + ledger.getItemName() + ")");
                 } else {
                     expenseArr.add(ledger.getAmmount() + " (" + ledger.getItemName() + ")");
                 }
@@ -237,7 +210,13 @@ public class MainActivity extends AppCompatActivity {
           //  Toast.makeText(this,"I am a disco dancer",Toast.LENGTH_LONG).show();
             tb.setDataAdapter(new SimpleTableDataAdapter(this, tableData));
         }
-
+        int totalBalance = Integer.parseInt(helper.getTotalBalance());
+        ProgressBar progressBar = findViewById(R.id.progressBar2);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            progressBar.setProgress(totalBalance,true);
+        }
+        TextView balance = findViewById(R.id.balance);
+        balance.setText(String.valueOf(balance));
     }
 
     public void generatePDF() {
