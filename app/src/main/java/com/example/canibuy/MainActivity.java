@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         tb.setColumnCount(1);
         tb.setHeaderBackgroundColor(Color.parseColor("#2ecc71"));
         tb.setHeaderAdapter(new SimpleTableHeaderAdapter(this, tableheaders));
-        progressBar.setProgress(10);
+        progressBar.setProgress(0);
         balance.setText("0");
         ArrayList<Ledger> ledgerList = helper.retrieveLedger();
         int credit = 0;

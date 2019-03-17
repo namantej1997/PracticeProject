@@ -52,8 +52,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Category"/>
+        android:text="Travel"/>
     <SeekBar
+        android:id="@+id/travel"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:progress="25"/>
@@ -71,8 +72,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Category2"/>
+            android:text="Food"/>
         <SeekBar
+            android:id="@+id/food"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:progress="25"/>
@@ -90,8 +92,29 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Category3"/>
+            android:text="Investments"/>
         <SeekBar
+            android:id="@+id/investments"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:progress="25"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout4"
+        app:layout_constraintTop_toBottomOf="@+id/layout3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Miscellaneous"/>
+        <SeekBar
+            android:id="@+id/miscellaneous"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:progress="25"/>
@@ -102,7 +125,7 @@
         android:id="@+id/insight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/layout3"
+        app:layout_constraintTop_toBottomOf="@+id/layout4"
         android:text="Insights"
         android:textFontWeight="bold"
         android:textSize="25dp"
@@ -228,13 +251,15 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="230dp"
+
         android:layout_marginTop="92dp"
         android:text=" 453"
         android:textSize="24sp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/balance"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_marginLeft="245dp" />
+
+
+         />
 
 
 </android.support.constraint.ConstraintLayout>

@@ -99,7 +99,8 @@
         android:layout_marginTop="20dp"
         android:textSize="15dp"
         android:text="How we use your data? Read our Data Promise"
-        android:id="@+id/hehe"/>
+        android:id="@+id/hehe"
+        android:layout_marginLeft="20dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -112,6 +113,7 @@
         android:textFontWeight="bold"
         android:textColor="@color/black"
         android:id="@+id/here"
+        android:textStyle="bold"
         />
 
 
