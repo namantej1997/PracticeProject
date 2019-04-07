@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<String> expenseArr = new ArrayList<>();
             for (Ledger ledger : ledgerList) {
                 if (ledger.isDebited()) {
-                    expenseArr.add("                    Rs. " + ledger.getAmmount() + " (" + ledger.getItemName() + ")");
+                    expenseArr.add("                            Rs. " + ledger.getAmmount() + " (" + ledger.getItemName() + ")");
                     balance.setText(String.valueOf(Integer.parseInt(balance.getText().toString()) - Integer.parseInt(ledger.getAmmount())));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         progressBar.setProgress(Integer.parseInt(balance.getText().toString()) * 100/credit);

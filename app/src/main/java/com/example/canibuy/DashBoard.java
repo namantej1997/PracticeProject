@@ -229,6 +229,10 @@ public class DashBoard extends AppCompatActivity {
             totalshareExpense = bkshare+ibmshare;
         }
 
+        if(totalshareExpense==0){
+            totalshareExpense=1;
+        }
+
         int percentblkshare = bkshare*100/totalshareExpense;
         int percentibmshare = ibmshare*100/totalshareExpense;
 
